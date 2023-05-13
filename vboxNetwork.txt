@@ -31,7 +31,7 @@ VBoxManage modifyvm  $VBOX_NAME --vrde-auth-type=null
 #add a new nat network
 VBoxManage natnetwork add --netname $VBOX_NET_NAME --network "192.168.10.0/24" --enable
 
-## !!!Enable or Disable DHCP for the network (on or off)
+## !!!!Enable or Disable DHCP for the network (on or off)
 VBoxManage natnetwork modify --netname $VBOX_NET_NAME --dhcp on
 
 
