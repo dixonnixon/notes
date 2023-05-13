@@ -1,0 +1,37 @@
+1) import GPG
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+2)import MS repo
+sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-2017.list)"
+3)Install MS SQL server
+sudo apt-get update
+sudo apt-get install -y mssql-server
+
+4) IF openssl incorrected version
+sudo apt install aptitude
+sudo aptitude install mssql-server
+mssql-server [Not Installed]                
+n
+Downgrade
+Y
+Install?
+Y
+
+5)configure SA login
+sudo /opt/mssql/bin/mssql-conf setup
+
+Created symlink from /etc/systemd/system/multi-user.target.wants/mssql-server.service to /lib/systemd/system/mssql-server.service.
+
+6) Status of server 
+systemctl status mssql-server
+
+-------------------------------------------------install CLI
+1)wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+2)sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/16.04/prod.list)"
+3)sudo apt-get update
+sudo apt-get install -y mssql-tools unixodbc-dev
+
+4) add to PATH
+echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile
+echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
+source ~/.bashrc
+

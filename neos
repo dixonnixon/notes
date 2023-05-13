@@ -1,0 +1,11 @@
+/var/www/html/neos/neos-base-distribution/Data/SetupPassword.txt
+RPBy9Khb
+
+andrew superb
+eeyet/admin/P@ssw0rd
+
+community eeyet/P@ssw0rd
+
+//run flow
+./flow server:run
+

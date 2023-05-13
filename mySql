@@ -1,0 +1,27 @@
+SELECT user,authentication_string,plugin,host FROM mysql.user; --select auth type
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password'; --change pass
+FLUSH PRIVILEGES; -- exec alters
+
+show grants for '<uNm>'@'localhost'; --show priveleges for user
+
+
+------------------shell-------------------
+--check is it started
+systemctl status mysql.service 
+--start mySql service 
+sudo systemctl start mysql
+--check mysqladmin
+sudo mysqladmin -p -u root version
+
+--mySettings
+CREATE USER 'eCom'@'localhost' IDENTIFIED BY 'P@ssw0rdeCom';
+create database eCom;
+GRANT SELECT,UPDATE,DELETE ON eCom.* TO 'eCom'@'localhost';
+GRANT ALL ON eCom.* TO 'eCom'@'localhost';
+FLUSH PRIVILEGES;
+
+CREATE USER 'neos'@'localhost' IDENTIFIED BY 'P@ssw0rdNeos';
+CREATE USER 'neos'@'localhost' IDENTIFIED BY 'P@ssw0rdNeos';
+
+
+

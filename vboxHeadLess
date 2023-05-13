@@ -1,0 +1,71 @@
+#https://www.medo64.com/2020/09/headless-virtualbox-on-ubuntu-server-20-04/
+#https://ostechnix.com/install-oracle-virtualbox-ubuntu-16-04-headless-server/
+#https://ostechnix.com/install-and-configure-kvm-in-ubuntu-20-04-headless-server/
+
+
+vboxmanage extpack install
+
+##rutine maybe after fail
+ sudo mv /srv/virtualbox/DBServer/DBServer.vbox /srv/virtualbox/DBServer/DBServer.vbox.bcp
+
+ --------------------------------------
+ 
+  sudo vboxmanage list vms
+  
+ 
+ 
+ ---------------------------------------
+ 
+VBOX_NAME=DBServer1
+VBOX_NET_NAME=NATNetwork101
+
+
+sudo vboxmanage createvm \
+    --ostype Ubuntu_64 \
+    --basefolder "/srv/virtualbox" \
+    --register \
+    --name "$VBOX_NAME"
+	
+sudo vboxmanage  modifyvm "$VBOX_NAME" \
+    --memory 1024 \
+    --nic1 nat \
+	--nic2 hostonly \
+	--hostonlyadapter2 vboxnet0 \
+    --vrde on --vrdeport 33890
+	
+sudo vboxmanage  modifyvm "$VBOX_NAME" --vrde on --vrdeproperty "TCP/Ports=3389" --vrdeproperty "TCP/Address=0.0.0.0"
+
+	
+sudo vboxmanage createhd \
+    --filename "/srv/virtualbox/$VBOX_NAME/$VBOX_NAME.vdi" \
+    --format VDI --size 10240
+	
+	
+sudo vboxmanage storagectl "$VBOX_NAME" \
+    --name "SATA" \
+    --add sata
+	
+	
+sudo vboxmanage storageattach "$VBOX_NAME" \
+    --storagectl SATA --port 0 --type hdd \
+    --medium "/srv/virtualbox/$VBOX_NAME/$VBOX_NAME.vdi"
+	
+	
+sudo vboxmanage storageattach "$VBOX_NAME" \
+    --storagectl SATA --port 15 --type dvddrive \
+    --medium "/home/vboxmanage/distr/ubuntu-20.04.6-desktop-amd64.iso"
+	
+iptables -A INPUT -p tcp --dport 33890 -j ACCEPT
+
+sudo vboxmanage startvm "$VBOX_NAME" --type headless
+
+sudo VBoxManage guestproperty get $VBOX_NAME "/VirtualBox/GuestInfo/Net/0/V4/IP"
+
+#stopvm
+sudo vboxmanage controlvm "$VBOX_NAME" savestate
+
+
+sudo VBoxHeadless --startvm "$VBOX_NAME" --vrde on --vrdeproperty "TCP/Ports=5940" --vrdeproperty "TCP/Address=192.168.56.101"
+
+sudo VBoxHeadless --startvm "$VBOX_NAME" --vrde on --vrdeproperty "TCP/Ports=5490" --vrdeproperty "TCP/Address=0.0.0.0"
+

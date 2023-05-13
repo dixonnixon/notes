@@ -1,0 +1,11 @@
+sudo apt-get install php-dev libmcrypt-dev gcc make autoconf libc-dev pkg-config
+
+# Compile mcrypt extension
+sudo pecl install mcrypt-1.0.1
+# Just press enter when it asks about libmcrypt prefix
+
+# Enable extension for apache
+echo "extension=mcrypt.so" | sudo tee -a /etc/php/7.2/apache2/conf.d/mcrypt.ini
+
+# Restart apache
+sudo service apache2 restart

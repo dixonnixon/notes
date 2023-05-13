@@ -1,0 +1,84 @@
+VBOX_NAME=DBServer1
+VBOX_NET_NAME=NATNetwork101
+
+ip link show
+ip a
+ip route show | grep default
+
+#---------------------------------------
+sudo vboxmanage list runningvms
+
+sudo vboxmanage showvminfo --details $VBOX_NAME
+sudo vboxmanage showvminfo --details {UID} | "name"
+
+sudo vboxmanage showvminfo --details $VBOX_NAME | grep VRDE
+
+sudo VBoxManage list dhcpservers
+
+VBoxManage modifyvm "$VBOX_NAME" --vrdeproperty VNCPassword=secret
+
+sudo VBoxHeadless --startvm "$VBOX_NAME" --vrde on --vrdeproperty "TCP/Ports=5490" --vrdeproperty "TCP/Address=0.0.0.0"
+
+
+##------------------------------ Network Ops
+sudo  vboxmanage natnetwork list
+
+VBoxManage list natnets
+
+
+VBoxManage modifyvm  $VBOX_NAME --vrde-auth-type=null
+
+#add a new nat network
+VBoxManage natnetwork add --netname $VBOX_NET_NAME --network "192.168.10.0/24" --enable
+
+## !!!Enable or Disable DHCP for the network (on or off)
+VBoxManage natnetwork modify --netname $VBOX_NET_NAME --dhcp on
+
+
+## Start the NAT service
+sudo VBoxManage natnetwork start --netname $VBOX_NET_NAME
+
+
+sudo VBoxManage natnetwork modify --netname $VBOX_NET_NAME \
+  --port-forward-4 "ssh:tcp:[]:1022:[192.168.10.197]:22"
+  
+sudo VBoxManage natnetwork modify --netname $VBOX_NET_NAME \
+  --port-forward-4 "ssh:tcp:[127.0.0.1]:2222:[192.168.56.102]:22"
+
+sudo VBoxManage dhcpserver add --network $VBOX_NET_NAME  --lowerip 192.168.10.100  --upperip 192.168.10.254 --netmask=255.255.255.0 --ip 192.168.10.1
+
+
+
+#This command would reserve the network addresses from 192.168.0.0 to 192.168.254.254 for the first NAT 
+#network instance of VM-name The guest IP would be assigned to 192.168.0.15 and the default gateway could be #found at 192.168.0.2.	
+sudo vboxmanage modifyvm $VBOX_NAME --natnet1 "192.168/16"
+
+
+sudo vboxmanage modifyvm $VBOX_NAME --nic1 natnetwork
+
+
+#vvvvvvvvvvvvvvvvvvvv
+ F=$(sudo VBoxManage list runningvms | awk -F\" '{print $2}')
+ sudo vboxmanage guestproperty enumerate $F
+
+
+sudo vboxmanage dhcpserver findlease --network NatNetwork --mac-address=
+
+
+sudo VBoxHeadless --startvm "$VBOX_NAME" --vrde on --vrdeproperty "TCP/Ports=5940" --vrdeproperty "TCP/Address=0.0.0.0"
+----------------------------
+
+
+#to set up incoming NAT connections to an ssh server in the guest, use the #following command:
+
+VBoxManage modifyvm "$VBOX_NAME" --natpf1 "guestssh,tcp,,2222,,22"
+
+
+#To remove this forwarding rule, use the following command:
+
+VBoxManage modifyvm "VM name" --natpf1 delete "guestssh"
+
+_________________________
+
+
+sudo VBoxHeadless --startvm "$VBOX_NAME" --vrde on --vrdeproperty "TCP/Ports=5490" --vrdeproperty "TCP/Address=0.0.0.0"

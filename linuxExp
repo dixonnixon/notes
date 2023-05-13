@@ -1,0 +1,3 @@
+install and run boot bootrepair to recoufigure broken GRUB loader
+
+sudo /etc/init.d/apache2 restart
