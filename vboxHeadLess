@@ -2,7 +2,7 @@
 #https://ostechnix.com/install-oracle-virtualbox-ubuntu-16-04-headless-server/
 #https://ostechnix.com/install-and-configure-kvm-in-ubuntu-20-04-headless-server/
 
-
+#!
 vboxmanage extpack install
 
 ##rutine maybe after fail
